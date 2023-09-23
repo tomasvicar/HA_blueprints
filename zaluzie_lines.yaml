@@ -1,5 +1,5 @@
 blueprint:
-  name: Sunblinds Control Blueprint
+  name: zaluzie_lines
   description: A blueprint to control sunblinds, including stopping and opening them a little bit.
   domain: automation
   input:
