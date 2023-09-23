@@ -1,5 +1,5 @@
 blueprint:
-  name: zaluzie_lines
+  name: Sunblinds Control Blueprint
   description: A blueprint to control sunblinds, including stopping and opening them a little bit.
   domain: automation
   input:
@@ -38,25 +38,30 @@ max_exceeded: silent
 trigger: []
 condition: []
 action:
-  - type: turn_off
-    entity_id: !input switch_up
-  - type: turn_on
-    entity_id: !input switch_down
+  - service: switch.turn_off
+    target:
+      entity_id: "{{ switch_up }}"
+  - service: switch.turn_on
+    target:
+      entity_id: "{{ switch_down }}"
   - wait_for_trigger:
       - platform: numeric_state
-        entity_id: !input sunblind_power_sensor
-        below: !input power_threshold
+        entity_id: "{{ sunblind_power_sensor }}"
+        below: "{{ power_threshold }}"
         for: 
           seconds: 2
     continue_on_timeout: false
-  - type: turn_off
-    entity_id: !input switch_down
-  - type: turn_on
-    entity_id: !input switch_up
+  - service: switch.turn_off
+    target:
+      entity_id: "{{ switch_down }}"
+  - service: switch.turn_on
+    target:
+      entity_id: "{{ switch_up }}"
   - delay:
       hours: 0
       minutes: 0
       seconds: 1
       milliseconds: 500
-  - type: turn_off
-    entity_id: !input switch_up
+  - service: switch.turn_off
+    target:
+      entity_id: "{{ switch_up }}"
