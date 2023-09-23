@@ -37,26 +37,32 @@ max_exceeded: silent
 
 trigger: []
 condition: []
+variables:
+  switch_up_entity: !input switch_up
+  switch_down_entity: !input switch_down
+  power_sensor_entity: !input sunblind_power_sensor
+  power_threshold_value: !input power_threshold
+
 action:
   - service: switch.turn_off
     target:
-      entity_id: "{{ switch_up }}"
+      entity_id: "{{ switch_up_entity }}"
   - service: switch.turn_on
     target:
-      entity_id: "{{ switch_down }}"
+      entity_id: "{{ switch_down_entity }}"
   - wait_for_trigger:
       - platform: numeric_state
-        entity_id: "{{ sunblind_power_sensor }}"
-        below: "{{ power_threshold }}"
+        entity_id: "{{ power_sensor_entity }}"
+        below: "{{ power_threshold_value }}"
         for: 
           seconds: 2
     continue_on_timeout: false
   - service: switch.turn_off
     target:
-      entity_id: "{{ switch_down }}"
+      entity_id: "{{ switch_down_entity }}"
   - service: switch.turn_on
     target:
-      entity_id: "{{ switch_up }}"
+      entity_id: "{{ switch_up_entity }}"
   - delay:
       hours: 0
       minutes: 0
@@ -64,4 +70,4 @@ action:
       milliseconds: 500
   - service: switch.turn_off
     target:
-      entity_id: "{{ switch_up }}"
+      entity_id: "{{ switch_up_entity }}"
