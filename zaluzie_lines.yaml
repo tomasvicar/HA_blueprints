@@ -1,5 +1,5 @@
 blueprint:
-  name: Sunblinds Control Blueprint
+  name: zaluzie_lines
   description: A blueprint to control sunblinds, including stopping and opening them a little bit.
   domain: automation
   input:
@@ -8,61 +8,42 @@ blueprint:
       description: The switch to control the up motion of the sunblind.
       selector:
         entity:
-          domain: switch
     switch_down:
       name: Sunblind Down Switch
       description: The switch to control the down motion of the sunblind.
       selector:
         entity:
-          domain: switch
-    sunblind_power_sensor:
+    sunblind_power_sensor_down:
       name: Sunblind Power Sensor
       description: The sensor that monitors the power consumption of the sunblind.
       selector:
         entity:
-          domain: sensor
-    power_threshold:
-      name: Power Threshold
-      description: The power consumption threshold to wait for (in watts).
-      default: 3
-      selector:
-        number:
-          min: 0
-          max: 1000
-          step: 1
-          unit_of_measurement: W
 
 mode: single
 max_exceeded: silent
 
 trigger: []
 condition: []
-variables:
-  switch_up_entity: !input switch_up
-  switch_down_entity: !input switch_down
-  power_sensor_entity: !input sunblind_power_sensor
-  power_threshold_value: !input power_threshold
-
 action:
   - service: switch.turn_off
     target:
-      entity_id: "{{ switch_up_entity }}"
+      entity_id: !input switch_up
   - service: switch.turn_on
     target:
-      entity_id: "{{ switch_down_entity }}"
+      entity_id: !input switch_down
   - wait_for_trigger:
       - platform: numeric_state
-        entity_id: "{{ power_sensor_entity }}"
-        below: "{{ power_threshold_value }}"
-        for: 
-          seconds: 2
+        entity_id: !input sunblind_power_sensor_down
+        below: 3
+        for:
+          seconds: 1
     continue_on_timeout: false
   - service: switch.turn_off
     target:
-      entity_id: "{{ switch_down_entity }}"
+      entity_id: !input switch_down
   - service: switch.turn_on
     target:
-      entity_id: "{{ switch_up_entity }}"
+      entity_id: !input switch_up
   - delay:
       hours: 0
       minutes: 0
@@ -70,4 +51,4 @@ action:
       milliseconds: 500
   - service: switch.turn_off
     target:
-      entity_id: "{{ switch_up_entity }}"
+      entity_id: !input switch_up
