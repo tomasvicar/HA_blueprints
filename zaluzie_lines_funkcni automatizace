@@ -1,1 +1,48 @@
+alias: zaluzie_obyvak_1_lines_test
+description: ""
+trigger: []
+condition: []
+action:
+  - type: turn_off
+    device_id: 7979c79a3e01462a0960e3cf8ae9d6de
+    entity_id: a61b01179ba48098ed2b2d6f662e6142
+    domain: switch
+  - type: turn_on
+    device_id: 7979c79a3e01462a0960e3cf8ae9d6de
+    entity_id: 3845bc7af8889037f8d7377c16e51d74
+    domain: switch
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - wait_for_trigger:
+      - platform: numeric_state
+        entity_id:
+          - sensor.zaluzie_obyvak_1_switch_1_power
+        below: 3
+    continue_on_timeout: false
+    timeout:
+      hours: 0
+      minutes: 1
+      seconds: 40
+      milliseconds: 0
+  - type: turn_off
+    device_id: 7979c79a3e01462a0960e3cf8ae9d6de
+    entity_id: 3845bc7af8889037f8d7377c16e51d74
+    domain: switch
+  - type: turn_on
+    device_id: 7979c79a3e01462a0960e3cf8ae9d6de
+    entity_id: a61b01179ba48098ed2b2d6f662e6142
+    domain: switch
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 500
+  - type: turn_off
+    device_id: 7979c79a3e01462a0960e3cf8ae9d6de
+    entity_id: a61b01179ba48098ed2b2d6f662e6142
+    domain: switch
+mode: single
 
