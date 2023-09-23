@@ -1,0 +1,62 @@
+blueprint:
+  name: Sunblinds Control Blueprint
+  description: A blueprint to control sunblinds, including stopping and opening them a little bit.
+  domain: automation
+  input:
+    switch_up:
+      name: Sunblind Up Switch
+      description: The switch to control the up motion of the sunblind.
+      selector:
+        entity:
+          domain: switch
+    switch_down:
+      name: Sunblind Down Switch
+      description: The switch to control the down motion of the sunblind.
+      selector:
+        entity:
+          domain: switch
+    sunblind_power_sensor:
+      name: Sunblind Power Sensor
+      description: The sensor that monitors the power consumption of the sunblind.
+      selector:
+        entity:
+          domain: sensor
+    power_threshold:
+      name: Power Threshold
+      description: The power consumption threshold to wait for (in watts).
+      default: 3
+      selector:
+        number:
+          min: 0
+          max: 1000
+          step: 1
+          unit_of_measurement: W
+
+mode: single
+max_exceeded: silent
+
+trigger: []
+condition: []
+action:
+  - type: turn_off
+    entity_id: !input switch_up
+  - type: turn_on
+    entity_id: !input switch_down
+  - wait_for_trigger:
+      - platform: numeric_state
+        entity_id: !input sunblind_power_sensor
+        below: !input power_threshold
+        for: 
+          seconds: 2
+    continue_on_timeout: false
+  - type: turn_off
+    entity_id: !input switch_down
+  - type: turn_on
+    entity_id: !input switch_up
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 500
+  - type: turn_off
+    entity_id: !input switch_up
